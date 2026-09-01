@@ -56,6 +56,17 @@ data/schema.sql            # assets / hubs / hub_access_emails / hub_items / vie
 | `LINK_HUB_SECRET` | HMAC secret for magic-link tokens + session cookies |
 | `LPOS_INGEST_TOKEN` | shared secret LPOS sends on `POST /api/ingest` (`x-lpos-token`) |
 | `NEXT_PUBLIC_APP_ORIGIN` | public origin, for building magic-link URLs |
+| `LINK_HUB_DEMO` | set to `1` for a walkthrough instance — see Demo mode below |
+
+## Demo mode
+
+Set `LINK_HUB_DEMO=1` to turn any instance (including production) into a self-contained walkthrough — no email sender or real Cloudflare video required:
+
+- The sample hubs are seeded on boot (idempotent).
+- The sign-in page shows **one-click demo logins** (Orlando → 2 hubs / LeaderPass showcase / Priya) that bypass the magic-link email via `GET /api/auth/demo?email=…` (hard-gated behind the flag — 404 otherwise).
+- Placeholder (`demo-uid-*`) videos play a public sample clip instead of Cloudflare, and the player shows a **DEMO** badge.
+
+Unset the flag (or leave it unset) and none of this activates — the real magic-link + Cloudflare paths are untouched.
 
 ## Not built yet (see spec §open questions)
 

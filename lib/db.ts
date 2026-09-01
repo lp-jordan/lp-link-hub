@@ -17,12 +17,21 @@ export function db(): Database.Database {
   const schema = readFileSync(join(process.cwd(), 'data', 'schema.sql'), 'utf8');
   conn.exec(schema);
   _db = conn; // set before seeding so upsertHubFromLpos() reuses this connection
-  seedIfEmpty(conn);
+  maybeSeed(conn);
   return conn;
 }
 
-/** Dev convenience: fill an empty DB with sample hubs. No-op in prod or if populated. */
-function seedIfEmpty(conn: Database.Database): void {
+/**
+ * Seed sample hubs when it's safe/useful:
+ *  - LINK_HUB_DEMO=1 → always upsert the samples (idempotent), even in production,
+ *    so a demo instance is populated for a walkthrough.
+ *  - otherwise, dev only, and only when the DB is empty.
+ */
+function maybeSeed(conn: Database.Database): void {
+  if (process.env.LINK_HUB_DEMO === '1') {
+    for (const payload of SAMPLE_HUBS) upsertHubFromLpos(payload);
+    return;
+  }
   if (process.env.NODE_ENV === 'production') return;
   const { n } = conn.prepare(`SELECT COUNT(*) AS n FROM hubs`).get() as { n: number };
   if (n > 0) return;
