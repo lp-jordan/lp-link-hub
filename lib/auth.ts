@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
  * Same scheme signs both the emailed magic-link token and the session cookie.
  */
 
-const SESSION_COOKIE = 'hub_session';
+export const SESSION_COOKIE = 'hub_session';
 const MAGIC_TTL_MS = 20 * 60 * 1000; // 20 min
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
@@ -60,15 +60,24 @@ export function verifyMagicToken(token: string): string | null {
 
 // ── session cookie ─────────────────────────────────────────────────────────────
 
-export function startSession(email: string): void {
-  const value = sign({ email: email.toLowerCase(), exp: Date.now() + SESSION_TTL_MS, k: 'sess' });
-  cookies().set(SESSION_COOKIE, value, {
+/** Cookie options shared by every place that writes the session cookie. */
+export function sessionCookieOptions() {
+  return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     path: '/',
     maxAge: SESSION_TTL_MS / 1000,
-  });
+  };
+}
+
+/** Signed session cookie value for `email`. Throws if LINK_HUB_SECRET is unset. */
+export function makeSessionValue(email: string): string {
+  return sign({ email: email.toLowerCase(), exp: Date.now() + SESSION_TTL_MS, k: 'sess' });
+}
+
+export function startSession(email: string): void {
+  cookies().set(SESSION_COOKIE, makeSessionValue(email), sessionCookieOptions());
 }
 
 /** The logged-in email, or null. Read in server components / route handlers. */

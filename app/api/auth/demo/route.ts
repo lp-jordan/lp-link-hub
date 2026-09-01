@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { startSession } from '@/lib/auth';
+import { SESSION_COOKIE, makeSessionValue, sessionCookieOptions } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -18,6 +18,7 @@ export async function GET(req: Request) {
   if (!email || !email.includes('@')) {
     return NextResponse.redirect(`${origin}/signin`);
   }
-  startSession(email);
-  return NextResponse.redirect(`${origin}/`);
+  const res = NextResponse.redirect(`${origin}/`);
+  res.cookies.set(SESSION_COOKIE, makeSessionValue(email), sessionCookieOptions());
+  return res;
 }

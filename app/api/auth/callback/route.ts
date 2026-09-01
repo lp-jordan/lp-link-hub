@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { verifyMagicToken, startSession } from '@/lib/auth';
+import { verifyMagicToken, SESSION_COOKIE, makeSessionValue, sessionCookieOptions } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -12,6 +12,7 @@ export async function GET(req: Request) {
   const email = verifyMagicToken(token);
   if (!email) return NextResponse.redirect(`${origin}/signin?error=expired`);
 
-  startSession(email);
-  return NextResponse.redirect(`${origin}/`);
+  const res = NextResponse.redirect(`${origin}/`);
+  res.cookies.set(SESSION_COOKIE, makeSessionValue(email), sessionCookieOptions());
+  return res;
 }
