@@ -87,18 +87,13 @@ a{color:inherit;text-decoration:none}
 .back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
 
 /* player page (/v/[token]) */
-.player{position:fixed;inset:0;background:#05080b;display:flex;flex-direction:column}
-.player .urlbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#0a1017;border-bottom:1px solid var(--line)}
-.player .urlbar .u{flex:1;min-width:0;font-family:var(--mono);font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player .stage{flex:1;display:grid;place-items:center;padding:24px}
-.player .screen-wrap{position:relative;width:min(94vw,1160px)}
-.player .screen{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 40px 120px -30px rgba(0,0,0,.9)}
+.player{position:fixed;inset:0;background:#05080b;display:flex;align-items:center;justify-content:center;padding:18px}
+/* pcol is the largest 16/9-wide column that fits the window (minus the title row
+   + padding), so the video nearly fills the screen at any window size. */
+.player .pcol{display:flex;flex-direction:column;gap:12px;width:min(96vw, calc((100dvh - 96px) * 16 / 9))}
+.player .ptitle-out{margin:0;text-align:left;color:var(--text-strong);font-weight:700;
+  font-size:clamp(17px,2.2vw,26px);line-height:1.2;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player .screen{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 40px 120px -30px rgba(0,0,0,.9)}
 .player .screen iframe{width:100%;height:100%;border:0}
-/* title overlays the player, left-justified, larger; truncates at the player's right edge */
-.player .ptitle{position:absolute;top:0;left:0;right:0;z-index:3;padding:16px 22px 30px;
-  text-align:left;color:#fff;font-weight:700;font-size:clamp(18px,2.6vw,26px);line-height:1.2;letter-spacing:-.01em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
-  border-radius:12px 12px 0 0;background:linear-gradient(rgba(5,8,11,.78),rgba(5,8,11,0));
-  opacity:1;transition:opacity .45s ease}
-.player .ptitle.hidden{opacity:0}
-@media (prefers-reduced-motion:reduce){.player .ptitle{transition:none}}
+.player .demo-badge{position:absolute;top:12px;right:12px;z-index:4;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent-strong);background:rgba(5,8,11,.6);border:1px solid rgba(219,175,95,.4);border-radius:100px;padding:3px 9px}

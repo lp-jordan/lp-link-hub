@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { videoByToken, recordView } from '@/lib/db';
-import { PlayerTitle } from '@/components/PlayerTitle';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,51 +30,29 @@ export default function WatchPage({ params }: { params: { token: string } }) {
 
   return (
     <div className="player">
-      <div className="stage">
-        <div className="screen-wrap">
-          <PlayerTitle title={video.title} />
-          {isDemo && (
-            <span
-              style={{
-                position: 'absolute',
-                top: 14,
-                right: 14,
-                zIndex: 4,
-                fontSize: 10,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                fontWeight: 700,
-                color: 'var(--accent-strong)',
-                background: 'rgba(5,8,11,0.6)',
-                border: '1px solid rgba(219,175,95,0.4)',
-                borderRadius: 100,
-                padding: '3px 9px',
-              }}
-            >
-              Demo
-            </span>
+      <div className="pcol">
+        <h1 className="ptitle-out">{video.title}</h1>
+        <div className="screen">
+          {isDemo && <span className="demo-badge">Demo</span>}
+          {isDemo ? (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
+            <video
+              src={demoSrc}
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: '#000' }}
+            />
+          ) : (
+            <iframe
+              src={cfSrc}
+              title={video.title}
+              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+              allowFullScreen
+            />
           )}
-          <div className="screen">
-            {isDemo ? (
-              // eslint-disable-next-line jsx-a11y/media-has-caption
-              <video
-                src={demoSrc}
-                controls
-                autoPlay
-                muted
-                loop
-                playsInline
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              />
-            ) : (
-              <iframe
-                src={cfSrc}
-                title={video.title}
-                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                allowFullScreen
-              />
-            )}
-          </div>
         </div>
       </div>
     </div>
