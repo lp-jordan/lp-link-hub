@@ -12,6 +12,21 @@ export const SESSION_COOKIE = 'hub_session';
 const MAGIC_TTL_MS = 20 * 60 * 1000; // 20 min
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
+/**
+ * The app's absolute origin for building redirect/link URLs.
+ * Uses NEXT_PUBLIC_APP_ORIGIN (tolerating a missing scheme or trailing slash);
+ * falls back to the request's own origin. Never returns a scheme-less value —
+ * a bare host would make NextResponse.redirect throw "Invalid URL".
+ */
+export function appOrigin(req: Request): string {
+  let o = (process.env.NEXT_PUBLIC_APP_ORIGIN ?? '').trim();
+  if (o) {
+    if (!/^https?:\/\//i.test(o)) o = `https://${o}`;
+    return o.replace(/\/+$/, '');
+  }
+  return new URL(req.url).origin;
+}
+
 function secret(): string {
   const s = process.env.LINK_HUB_SECRET;
   if (!s || s.length < 16) throw new Error('LINK_HUB_SECRET is missing or too short');

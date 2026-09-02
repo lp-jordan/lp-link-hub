@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mintMagicToken } from '@/lib/auth';
+import { mintMagicToken, appOrigin } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   }
 
   const token = mintMagicToken(clean);
-  const origin = process.env.NEXT_PUBLIC_APP_ORIGIN || new URL(req.url).origin;
+  const origin = appOrigin(req);
   const link = `${origin}/api/auth/callback?token=${encodeURIComponent(token)}`;
 
   // TODO: send `link` to `clean` via the real email sender (the one LPOS uses).
