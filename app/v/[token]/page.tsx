@@ -52,28 +52,30 @@ export default function WatchPage({ params }: { params: { token: string } }) {
           </span>
         )}
       </div>
-      <div className="ptitle">{video.title}</div>
       <div className="stage">
-        <div className="screen">
-          {isDemo ? (
-            // eslint-disable-next-line jsx-a11y/media-has-caption
-            <video
-              src={demoSrc}
-              controls
-              autoPlay
-              muted
-              loop
-              playsInline
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-          ) : (
-            <iframe
-              src={cfSrc}
-              title={video.title}
-              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-              allowFullScreen
-            />
-          )}
+        <div className="screen-wrap">
+          <div className="ptitle">{video.title}</div>
+          <div className="screen">
+            {isDemo ? (
+              // eslint-disable-next-line jsx-a11y/media-has-caption
+              <video
+                src={demoSrc}
+                controls
+                autoPlay
+                muted
+                loop
+                playsInline
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            ) : (
+              <iframe
+                src={cfSrc}
+                title={video.title}
+                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                allowFullScreen
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

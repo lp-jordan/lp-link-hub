@@ -52,6 +52,7 @@ export function Library({
             <option value="az">A–Z</option>
             <option value="dur">Duration</option>
           </select>
+          <a href="/api/auth/signout" className="signout">Sign out</a>
         </div>
       </div>
 

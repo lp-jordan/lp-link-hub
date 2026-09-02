@@ -12,6 +12,9 @@ export default function Home() {
   if (hubs.length === 0) {
     return (
       <div className="shell">
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <a href="/api/auth/signout" className="signout">Sign out</a>
+        </div>
         <div className="empty">This sign-in has no video library yet. Ask your LeaderPass contact.</div>
       </div>
     );
@@ -21,6 +24,9 @@ export default function Home() {
 
   return (
     <div className="shell">
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
+        <a href="/api/auth/signout" className="signout">Sign out</a>
+      </div>
       <div style={{ textAlign: 'center', marginBottom: 24 }}>
         <div className="sec-eyebrow">Signed in as {email}</div>
         <h1 style={{ fontSize: 22, fontWeight: 700, margin: '6px 0 4px', color: 'var(--text-strong)' }}>Choose a hub</h1>
