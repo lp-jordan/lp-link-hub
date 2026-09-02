@@ -96,4 +96,7 @@ a{color:inherit;text-decoration:none}
 .player .ptitle{position:absolute;top:0;left:0;right:0;z-index:3;padding:16px 22px 30px;
   text-align:left;color:#fff;font-weight:700;font-size:clamp(18px,2.6vw,26px);line-height:1.2;letter-spacing:-.01em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
-  border-radius:12px 12px 0 0;background:linear-gradient(rgba(5,8,11,.78),rgba(5,8,11,0))}
+  border-radius:12px 12px 0 0;background:linear-gradient(rgba(5,8,11,.78),rgba(5,8,11,0));
+  opacity:1;transition:opacity .45s ease}
+.player .ptitle.hidden{opacity:0}
+@media (prefers-reduced-motion:reduce){.player .ptitle{transition:none}}

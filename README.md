@@ -57,6 +57,8 @@ data/schema.sql            # assets / hubs / hub_access_emails / hub_items / vie
 | `LPOS_INGEST_TOKEN` | shared secret LPOS sends on `POST /api/ingest` (`x-lpos-token`) |
 | `NEXT_PUBLIC_APP_ORIGIN` | public origin, for building magic-link URLs |
 | `LINK_HUB_DEMO` | set to `1` for a walkthrough instance — see Demo mode below |
+| `RESEND_API_KEY` | Resend API key — required to actually email magic links (without it, dev prints the link) |
+| `LINK_HUB_MAIL_FROM` | From address, e.g. `LeaderPass <no-reply@leaderpass.com>` (defaults to Resend's onboarding sender) |
 
 ## Demo mode
 

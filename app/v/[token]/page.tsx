@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { videoByToken, recordView } from '@/lib/db';
+import { PlayerTitle } from '@/components/PlayerTitle';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,7 +55,7 @@ export default function WatchPage({ params }: { params: { token: string } }) {
       </div>
       <div className="stage">
         <div className="screen-wrap">
-          <div className="ptitle">{video.title}</div>
+          <PlayerTitle title={video.title} />
           <div className="screen">
             {isDemo ? (
               // eslint-disable-next-line jsx-a11y/media-has-caption
