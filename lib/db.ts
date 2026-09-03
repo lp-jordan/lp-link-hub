@@ -145,3 +145,14 @@ export function upsertHubFromLpos(p: IngestHubPayload): void {
   });
   tx();
 }
+
+/** Remove a hub and everything under it (called when LPOS deletes the hub). */
+export function deleteHub(hubId: string): void {
+  const conn = db();
+  const tx = conn.transaction((id: string) => {
+    conn.prepare('DELETE FROM hub_items WHERE hub_id = ?').run(id);
+    conn.prepare('DELETE FROM hub_access_emails WHERE hub_id = ?').run(id);
+    conn.prepare('DELETE FROM hubs WHERE id = ?').run(id);
+  });
+  tx(hubId);
+}
