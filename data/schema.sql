@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS assets (
   lpos_name      TEXT NOT NULL,             -- internal name (reference only; clients see hub_items.client_title)
   cf_stream_uid  TEXT NOT NULL,             -- Cloudflare Stream UID (what actually plays)
   duration_s     INTEGER NOT NULL DEFAULT 0,
+  thumbnail_url  TEXT,                      -- Cloudflare frame thumbnail (per-video); null falls back to a gradient
   updated_at     TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

@@ -16,9 +16,18 @@ export function db(): Database.Database {
   conn.pragma('foreign_keys = ON');
   const schema = readFileSync(join(process.cwd(), 'data', 'schema.sql'), 'utf8');
   conn.exec(schema);
+  migrateSchema(conn);
   _db = conn; // set before seeding so upsertHubFromLpos() reuses this connection
   maybeSeed(conn);
   return conn;
+}
+
+/** Additive migrations for DBs created before a column existed. */
+function migrateSchema(conn: Database.Database): void {
+  const cols = conn.prepare("PRAGMA table_info('assets')").all() as Array<{ name: string }>;
+  if (!cols.some((c) => c.name === 'thumbnail_url')) {
+    conn.exec('ALTER TABLE assets ADD COLUMN thumbnail_url TEXT');
+  }
 }
 
 /**
@@ -69,7 +78,8 @@ export function hubVideos(hubId: string): LibraryVideo[] {
   return db()
     .prepare(
       `SELECT i.share_token AS token, i.client_title AS title,
-              a.duration_s AS duration_s, a.cf_stream_uid AS cf_stream_uid
+              a.duration_s AS duration_s, a.cf_stream_uid AS cf_stream_uid,
+              a.thumbnail_url AS thumbnail_url
        FROM hub_items i
        JOIN assets a ON a.id = i.asset_id
        WHERE i.hub_id = ?
@@ -83,7 +93,8 @@ export function videoByToken(token: string): LibraryVideo | undefined {
   return db()
     .prepare(
       `SELECT i.share_token AS token, i.client_title AS title,
-              a.duration_s AS duration_s, a.cf_stream_uid AS cf_stream_uid
+              a.duration_s AS duration_s, a.cf_stream_uid AS cf_stream_uid,
+              a.thumbnail_url AS thumbnail_url
        FROM hub_items i
        JOIN assets a ON a.id = i.asset_id
        WHERE i.share_token = ?`,
@@ -121,11 +132,12 @@ export function upsertHubFromLpos(p: IngestHubPayload): void {
 
     // items + their assets — replace the set
     const insAsset = conn.prepare(
-      `INSERT INTO assets (id, lpos_name, cf_stream_uid, duration_s, updated_at)
-       VALUES (@id, @lpos_name, @cf_stream_uid, @duration_s, datetime('now'))
+      `INSERT INTO assets (id, lpos_name, cf_stream_uid, duration_s, thumbnail_url, updated_at)
+       VALUES (@id, @lpos_name, @cf_stream_uid, @duration_s, @thumbnail_url, datetime('now'))
        ON CONFLICT(id) DO UPDATE SET
          lpos_name = excluded.lpos_name, cf_stream_uid = excluded.cf_stream_uid,
-         duration_s = excluded.duration_s, updated_at = datetime('now')`,
+         duration_s = excluded.duration_s, thumbnail_url = excluded.thumbnail_url,
+         updated_at = datetime('now')`,
     );
     conn.prepare(`DELETE FROM hub_items WHERE hub_id = ?`).run(p.hub.id);
     const insItem = conn.prepare(
@@ -133,7 +145,13 @@ export function upsertHubFromLpos(p: IngestHubPayload): void {
        VALUES (@hub_id, @asset_id, @client_title, @share_token, @sort_order)`,
     );
     p.items.forEach((it, i) => {
-      insAsset.run({ id: it.asset_id, ...it.asset });
+      insAsset.run({
+        id: it.asset_id,
+        lpos_name: it.asset.lpos_name,
+        cf_stream_uid: it.asset.cf_stream_uid,
+        duration_s: it.asset.duration_s,
+        thumbnail_url: it.asset.thumbnail_url ?? null,
+      });
       insItem.run({
         hub_id: p.hub.id,
         asset_id: it.asset_id,

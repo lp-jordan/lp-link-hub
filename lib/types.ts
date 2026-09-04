@@ -5,6 +5,7 @@ export interface Asset {
   lpos_name: string;
   cf_stream_uid: string;
   duration_s: number;
+  thumbnail_url: string | null;
 }
 
 export interface Hub {
@@ -29,6 +30,7 @@ export interface LibraryVideo {
   title: string;
   duration_s: number;
   cf_stream_uid: string;
+  thumbnail_url: string | null;
 }
 
 /** Payload LPOS pushes to POST /api/ingest on save. Full replace per hub. */
@@ -49,6 +51,7 @@ export interface IngestHubPayload {
       lpos_name: string;
       cf_stream_uid: string;
       duration_s: number;
+      thumbnail_url?: string | null;
     };
   }>;
 }

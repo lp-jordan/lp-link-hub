@@ -63,6 +63,10 @@ export function Library({
           {shown.map((v) => (
             <div className="vitem" key={v.token}>
               <a className="vt" href={`/v/${v.token}`} aria-label={`Play ${v.title}`}>
+                {v.thumbnail_url && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="vt-thumb" src={v.thumbnail_url} alt="" loading="lazy" />
+                )}
                 <span className="dur">{fmt(v.duration_s)}</span>
               </a>
               <div className="vmeta">
